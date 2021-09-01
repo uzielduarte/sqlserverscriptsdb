@@ -1,0 +1,377 @@
+-- Practica 3.1: Cree una base de datos llamada Practica y cree la siguiente
+-- relacion (tabla) la llamaremos Persona y sus atributos nombre, apellido y DNI
+create database Practica
+go
+
+use Practica
+go
+
+create table Persona
+(IdPersona integer primary key identity(1,1),
+Nombre varchar(30),
+Apellido varchar(30),
+DNI integer);
+
+insert into Persona(Nombre, Apellido, DNI)
+values('MARTIN', 'MARQUESI', 26125988)
+
+insert into Persona(Nombre, Apellido, DNI)
+values('PABLO', 'MARQUESI', 25485699)
+
+insert into Persona(Nombre, Apellido, DNI)
+values('ROBERTO', 'SANCHEZ', 20566401)
+
+insert into Persona(Nombre, Apellido, DNI)
+values('ESTEFANIA', 'GUISSINI', 27128064)
+
+insert into Persona(Nombre, Apellido, DNI)
+values('RUBEN', 'ALEGRATO', 24238975)
+
+insert into Persona(Nombre, Apellido, DNI)
+values('SANDRA', 'BRITTE', 25483669)
+
+insert into Persona(Nombre, Apellido, DNI)
+values('MELISA', 'ARDUL', 27456224)
+
+insert into Persona(Nombre, Apellido, DNI)
+values('SOLEDAD', 'MICHELLI', 29889656)
+
+insert into Persona(Nombre, Apellido, DNI)
+values('BETANIA', 'MUSACHEGUI', 27128765)
+
+insert into Persona(Nombre, Apellido, DNI)
+values('JUAN', 'SERRAT', 28978845)
+
+select * from Persona
+/* Select A1, A2, ..., An
+ * From r1, r2, ..., rn
+ * Where P
+ * Donde Ai = atributo
+ * ri = relacion (tabla)
+ * P = predicado (codicion) */
+
+ -- Practica 3.2: Seleccione todos los nombres de las personas que
+ -- tengan el apellido MARQUESI de la tabla persona
+select Nombre from Persona where Apellido = 'MARQUESI '
+
+/* 
+ * Si se omite la clausula Where, el predicado P es verdadero.
+ * Las lista A1, A2, ..., An pueden sustituirse por un (*) para seleccionar
+ * todos los atributos de todas las relaciones que aparecen en la clausula
+ * From, aunque no es conveniente elegir esta ultima opcion salvo que sea necesario
+ * pues desperdiciamos mucho tiempo en obtenerlo. 
+ */
+
+ /* ALIAS
+  * Es posible renombrar los atributos y las relaciones, a veces por conveniencia y
+  * otras veces por ser necesario, para esto usamos la clausula AS
+  */
+
+  -- Practica 3.3: Ejecute la siguiente consulta
+  select Nombre AS [Primer Nombre] from Persona where Apellido = 'MARQUESI '
+  -- Los corchetes los usamos cuando usamos espacios en blancos o el caracter (-) en el nombre de atributo o alias
+  -- Cuando asociamos un alias con una relacion decimos que creamos una variable de tupla.
+  -- Estas variables de tuplas se definen en la clausula From despues del nombre de la relacion
+
+  /*
+   * Predicados y conectores
+   * AND, OR y NOT
+   * La logica de estos conectores es igual que en cualquier lenguaje de programcion y sirve para unir predicados.
+   * Las operaciones aritmeticas en SQL son:
+   * + (suma), - (resta), * (multiplicacion) y / (division)
+   * Tambien incluye el operador de comparacion Between que utiliza para valores comprendidos
+   */
+
+   -- Practica 3.4: encontrar todos los nombres y DNI de las personas cuyos DNI sean mayor que 26 millones y menor que 28 millones
+   select Nombre, DNI from Persona where DNI between 26000000 and 28000000
+
+   /*
+    * Analogamente podemos usar el operador de relacion NOT BETWEEN. SQL tambien incluye un operador de seleccion
+	* para comparaciones de cadena de caracteres. Los modelos se describen usando los caracteres especiales:
+	* El caracter (%) es igual a cualquier sub cadena
+	* El operador (_) es igual a cualquier caracter
+	* Estos modelos se expresan usando el operador de comparacion LIKE
+	* Es un error utilizar los modelos mediante el operador de igualdad (=) lo cual es un error de systaxis
+	*/
+
+-- Practica 3.5: Encontrar los nombres que comiencen con la letra p o el nombre tenga exactamente 6 caracteres de la relacion persona
+select Nombre from Persona where(Nombre like 'P%') or (Nombre like '______')
+-- Analogamente podemos buscar desigualdades usando el operador de comparacion NOT LIKE
+
+/*
+ * Tuplas duplicads
+ * En la práctica la eliminación de duplicados lleva bastante tiempo. Por lo tanto, SQL 
+ * permite duplicados en las relaciones. Entonces, en las consultas se listarán todas 
+ * las tuplas inclusive las repetidas.
+ * En aquellos casos en los que queremos forzar la eliminación de duplicados 
+ * insertamos la palabra clave DISTINCT después de la cláusula SELECT
+ */
+
+-- Pratica 3.6: Listar todos los apellidos no repetidos de la relacion persona
+select distinct Apellido from Persona
+
+/*
+ * Operaciones de conjunto
+ * SQL incluye las operaciones de conjuntos UNION, INTERSECT, MINUS, que 
+ * operan sobre relaciones y corresponden a las operaciones del álgebra unión, 
+ * intersección y resta de conjuntos respectivamente. Para realizar esta operación de 
+ * conjuntos debemos tener sumo cuidado que las relaciones tengan las mismas
+ * estructuras.
+ */
+
+-- Practica 3.7 Incorporemos ahora una nueva relacion llamada jugadores que representa las personas que
+-- juegan futbol, sus atributos seran DNI, puesto y NoCamiseta
+
+create table Jugadores
+(IdJugador int primary key identity(1,1),
+DNI integer,
+Puesto varchar(30),
+NoCamiseta integer);
+
+insert into Jugadores(DNI, Puesto, NoCamiseta)
+values(26125988, 'DELANTERO', 9)
+
+insert into Jugadores(DNI, Puesto, NoCamiseta)
+values(25485699, 'MEDIO', 5)
+
+insert into Jugadores(DNI, Puesto, NoCamiseta)
+values(28978845, 'ARQUERO', 1)
+
+insert into Jugadores(DNI, Puesto, NoCamiseta)
+values(29789854, 'DEFENSOR', 3)
+
+select * from Jugadores
+
+-- Practica 3.8: Obtener todos los nombres y apellidos de la relacion persona cuyos apellidos sean MARQUESI o SERRAT
+select Nombre, Apellido from Persona where Apellido = 'MARQUESI'
+union
+select Nombre, Apellido from Persona where Apellido = 'SERRAT'
+-- Por omision, la operacion union elimina las tuplas duplicadas. Para retener duplicados se debe escribir UNIO ALL en lugar de UNION
+
+-- Practica 3.9: Obtener todos los DNI de los que juegan futboly ademas, que esten en la lista de la relacion Persona
+/*
+ * Nota: Utilizar EXISTS y NOT EXISTS para buscar intersecciones y diferencias
+ * Las sub consultas presentadas con EXISTS y NOT EXISTS se pueden usar en dos operaciones de la 
+ * teoría de conjuntos: intersección y diferencia. La intersección de dos conjuntos contiene los 
+ * elementos que pertenecen a los dos conjuntos originales. La diferencia contiene los elementos que 
+ *pertenecen sólo al primero de los dos conjuntos.
+ */
+
+select distinct DNI from Persona where exists (select * from Jugadores where Persona.DNI = Jugadores.DNI)
+
+-- Por supeusto, tambien podria haberse escrito como una simple combinacion
+select distinct Persona.DNI from Persona inner join Jugadores on Persona.DNI = Jugadores.DNI
+
+/* Pertenencia a un conjunto
+ * El conector IN prueba si se es miembro de un conjunto, donde el conjunto es una 
+ * colección de valores producidos en lo general por una cláusula SELECT. 
+ * Análogamente el conector NOT IN prueba la no pertenencia al conjunto
+ */
+
+-- Practica 3.10: Encontrar los nombres de las personas que juegan al futbol y, ademas, se encuentran en la relacion persona
+select Nombre, Apellido from Persona where DNI in (select DNI from Jugadores)
+
+/*
+ * Comparacion de conjuntos
+ * En conjuntos la frase << mayor que algún >> se representa en SQL por (>SOME), 
+ * también podría entenderse esto como << mayor que el menor de >>, su sintaxis 
+ * es igual que la del conector IN. SQL también permite las comparaciones 
+ * ( >SOME ),( =SOME ) ( >=SOME ), ( <=SOME ) y ( <>SOME ).
+ * También existe la construcción ( >ALL ), que corresponde a la frase << mayor que 
+ * todos >>. Al igual que el operador SOME, puede escribirse ( >ALL ),( =ALL ) 
+ * ( >=ALL ), ( <=ALL ) y ( <>ALL ).
+ * En ocasiones podríamos querer comparar conjuntos para determinar si un 
+ * conjunto contiene los miembros de algún otro conjunto. Tales comparaciones se 
+ * hacen usando las construcciones CONTAINS y NOT CONTAINS
+ */
+
+/*
+ * Pruebas para relaciones vacia
+ * La construccion EXISTS devuelve el valor TRUE si la subconsulta del argumento
+ * no esta vacia, y la construccion NOT EXISTS devuelve TRUE si la consulta es vacia
+ */
+
+-- Practica 3.11 Encontrar todos los nombre y apellidos de la relacion persona si es que en la relacion jugadores esiste un jugador con el numero dni 27128055
+select Nombre, Apellido from Persona where exists (select DNI from jugadores where DNI =  26125988)
+
+/*
+ * Ordenacion de la presentacion de tuplas
+ * SQL ofrece al usuario cierto control sobre el orden en el que se va a presentar las 
+ * tuplas en una relación. La cláusula ORDER BY hace que las tupla en el resultado 
+ * de una consulta en un orden especifico.
+ * Por omisión SQL lista los elementos en orden ascendente. Para especificar el tipo 
+ * de ordenación, podemos especificar DESC para orden descendente o ASC para 
+ * orden ascendente.
+ * También es posible ordenar los resultados por más de una atributo
+ */
+
+-- 3.12 Encontrar todos los nombres y apellidos de la relacion persona y ordenar los resultados por apellido y nombre en forma descendente
+select Apellido, Nombre from Persona order by Apellido desc, Nombre desc
+
+/*
+ * Funciones de agregacion
+ * SQL ofrece la posibilidad de calcular funciones en grupos de tuplas usando la 
+ * cláusula GROUP BY, también incluye funciones para calcular
+ * Promedios AVG, Mínimo MIN, Máximo MAX, Total SUM y Contar COUNT
+ */
+
+-- Practica 3.13: Para los proximos ejemplos incorporar una nueva relacion llamada PRO que representa
+-- los jugadores profesionales de futbol, sus atributos sera, dni, aniospro, club, valoractual
+
+create table PRO
+ (IdPRO integer primary key identity(1,1),
+ DNI integer,
+ AniosPro integer,
+ Club varchar(30),
+ ValorActual integer);
+
+insert into PRO(DNI, AniosPro, Club, ValorActual)
+values(26125988, 5, 'ALL BOYS', 1000)
+
+insert into PRO(DNI, AniosPro, Club, ValorActual)
+values(25485699, 2, 'ALL BOYS', 2500)
+ 
+insert into PRO(DNI, AniosPro, Club, ValorActual)
+values(27126045, 3, 'LANUS', 12000)
+ 
+insert into PRO(DNI, AniosPro, Club, ValorActual)
+values(26958644, 4, 'LANUS', 6500)
+
+insert into PRO(DNI, AniosPro, Club, ValorActual)
+values(29120791, 1, 'LANUS', 450)
+
+select * from PRO
+
+-- Practica 3.14: Determinar el valor total en jugadores, asi como la cantidad de jugadores de cada club enla relacion pro
+select Club, sum(ValorActual) as Valor_Total,
+count(Club) as No_Jugadores from PRO group by Club
+
+-- Practica 3.15: Determinar por cada club cual es el valor actual del jugador mas caro de la relacion pro
+select Club, max(ValorActual) as [Jugador mas caro] from PRO group by Club
+
+/*
+ * Hay ocasiones en la que los duplicados deben eliminarse antes de calcular una 
+ * agregación. Cuando queremos eliminar los duplicados del calculo usamos la 
+ * palabra clave DISTINCT antepuesto al atributo de agregación que queremos 
+ * calcular, como por ejemplo COUNT (DISTINCT club).
+ * Hay ocasiones en las que es útil declara condiciones que se aplican a los grupos
+ * mas que a las tuplas. Para esto usamos la cláusula HAVING de SQL.
+ */
+
+-- Practica 3.16: Determinar por cada club cual es el valor actual del jugador mas caro, pero con la condicion de que este sea mayor a 10000 de la reacin pro
+select club, max(ValorActual) as [Jugador mas caro] from PRO group by Club having max(ValorActual) > 10000
+
+/*
+ * Si en la misma consulta aparece una cláusula WHERE y una cláusula HAVING, 
+ * primero se aplica el predicado de la cláusula WHERE, las tuplas que satisfacen el 
+ * predicado WHERE son colocadas en grupos por la cláusula GROUP BY. Después 
+ * se aplica la cláusula HAVING a cada grupo.
+ */
+
+/*
+ * Modificacion de la db
+ * Eliminacion
+ * Una solicitud de eliminación se expresa casi de igual forma que una consulta. 
+ * Podemos suprimir solamente tuplas completas, no podemos suprimir valores solo 
+ * de atributos.
+ * DELETE FROM r
+ * WHERE P
+ * Donde P presenta un predicado y r representa una relación. Las tuplas t en r para 
+ * las cuales P(t) es verdadero, son eliminadas de r.
+ * Si omitimos la cláusula WHERE se eliminan todas las tuplas de la relación r ( un 
+ * buen sistema debería buscar confirmación del usuario antes de ejecutar una 
+ * acción tan devastadora )
+ */
+
+-- Practica 3.17: Eliminar todas las tuplas de la relacion persona en donde apellido sea igual a "BRITTE"
+delete from Persona where Apellido = 'BRITTE'
+
+select * from Persona
+
+/*
+ * Insercion
+ * Para insertar datos en una relación, especificamos una tupla que se va a insertar o 
+ * escribimos una consulta cuyo resultado es un conjunto de tuplas que se van a 
+ * insertar. La inserción de tuplas la realizamos mediante las sentencias 
+ * INSERT INTO r1
+ * VALUES (v1,v2,...,v)
+ */
+
+-- Practica 3.18: Insertar una tupla con los mismos valores de la tupla eliminada en el ejemplo anterior en la relacion persona
+insert into Persona(Nombre, Apellido, DNI)
+values('SANDRA', 'BRITTE', '25483669')
+
+select * from Persona
+
+/*
+ * Para poder ingresar los 
+ * datos en un orden diferente podríamos haber escrito
+ * INSERT INTO Persona (DNI, NOMBRE, APELLIDO)
+ * VALUES (25483669,’SANDRA’,’BRITTE’)
+ */
+
+/*
+ * Actualizaciones
+ * En ciertas ocasiones podemos desear cambiar los valores de una tupla sin 
+ * cambiar todos los valores en dicha tupla. Para este propósito usamos la sentencia 
+ * UPDATE r1
+ * SET A1 = V1, A2 = V2,...,An = Vn
+ * WHERE P
+ * Donde r1 es la relación Ai el atributo a modificar Vi el valor que se le asignara a Ai 
+ * y P es el predicado.
+ */
+
+-- Practica 3.19: En la relacion jugadores actualizar la posicion de los jugadores que poseen la camiseta numero 5 y asignarles la nuemro 7
+update Jugadores set NoCamiseta = 7 where NoCamiseta = 5
+
+select * from Jugadores where NoCamiseta = 7
+
+/*
+ * Valores nulos
+ * Es posible que para las tuplas insertadas se den valores únicamente a algunos 
+ * atributos del esquema. El resto de los atributos son asignados a valores nulos 
+ * representados por NULL. Para esto colocamos la palabra reservada NULL como 
+ * valor del atributo.
+ */
+
+-- Práctica 3.20: Insertar en la relación jugadores un jugador con dni = 26356312, puesto = defensor, y al cual aun no le han asignado un nro_camiseta
+insert into Jugadores values(26356312,'DEFENSOR', null)
+
+select * from Jugadores
+
+/*
+ * Definicion de datos
+ * Cracion
+ * Una relación en SQL se define usando la orden 
+ * CREATE TABLE r(A1 D1, A2 D3,...,An Dn)
+ * Donde r es el nombre de la relación, cada Ai es el nombre de un atributo del 
+ * esquema de la relación r y Di es el tipo de dato de Ai. Una relación recién creada 
+ * esta vacía. La orden INSERT puede usarse para cargar la relación
+ */
+
+-- Práctica 3.21: Crear la relación lesionado con los atributos nombre, apellido ambos de tipo char y tiempo_inhabilit de tipo entero.
+create table Lesionado(Nombre char(20), Apellido char(20), TiempoInhabilitado integer);
+
+/*
+ * Eliminacion
+ * Para eliminar una relación usamos la orden DROP TABLE r, esta orden elimina 
+ * toda la información sobre la relación sacada de la base de datos, esta orden es 
+ * mas fuerte que DELET FROM r ya que esta ultima elimina todas las tuplas pero no 
+ * destruye la relación, mientras que la primera si.
+ */
+
+-- Práctica 3.22: Eliminar la relación persona.
+drop table Persona
+
+/*
+ * Actualizacion
+ * La orden ALTER TABLE se usa para añadir atributos a una relación existente. A 
+ * todas las tuplas en la relación se les asigna NULL como valor de atributo. La 
+ * sintaxis de ALTER TABLE es la siguiente:
+ * ALTER TABLE r1 ADD A1 D1
+ */
+
+-- Práctica 3.23: Agregar los atributos de tipo char nombre y apellido a la relación jugadores
+
+alter table Jugadores add Nombre char(20)
+alter table Jugadores add Apellido char(20)

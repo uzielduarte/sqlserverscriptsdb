@@ -1,0 +1,150 @@
+-- Creacion de una base de datos
+Create database Ejemplo
+on
+Primary
+(Name = EjemploData,
+filename = 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\ejemplo.mdf',
+size = 10MB, -- el minimo es 512kb, el predeterminado es 1mb
+maxsize = 15MB,
+-- Incremento default es 10%, minimo es 64kb
+Filegrowth = 20%
+)
+log on
+(Name = EjemploData_log,
+filename = 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\ejemplo.ldf',
+size = 3MB,
+maxsize = 15MB,
+Filegrowth = 20%)
+
+drop database Ejemplo
+-- Cree nuevamente la db Ejemplo para usarla
+-- Ponerla en uso
+use Ejemplo
+
+-- Crear tablas de la db
+Create table Customer
+(FirstName char(50),
+LastName char(50),
+Address char(50),
+Country char(25),
+BirthDate datetime);
+
+--Borrar la tabla Customer
+drop table Customer
+
+-- Crear tabla con valores predeterminados
+create table Customer
+(FirstName char(50),
+LastName char(50),
+Address char(50) default 'Unknown',
+City char(50) default 'Masaya',
+Country char(25),
+BirthDate datetime);
+
+-- Insertar un registro en la tabla Customer
+Insert into Customer(FirstName, LastName, Country, BirthDate)
+values('Hilda', 'Corina', 'Managua', '03/05/1961')
+
+select * from Customer
+/*not null
+De forma predeterminada, una columna puede ser null. Si no desea permitir un valor null en una columna, querra colocar una
+restriccion en esta columna especificando que null no es ahora un valor predeterminado.
+Por ejemplo, en la siguiente instruccion*/
+
+drop table Customer
+
+create table Customer
+(SID integer not null,
+LastName varchar(30) not null,
+FirstName varchar(30));
+-- Las columnas SID y LastName no aceptara valores null, en cambio FirstName si
+
+-- Insertar un registro en la tabla Customer
+insert into Customer(SID, LastName, FirstName)
+values('1', 'Corina', null)
+
+/* UNIQUE
+Las restrinccion UNIQUE asegura que todos los valores en una columna sean distintos */
+
+drop table Customer
+
+create table Customer
+(SID integer unique,
+LastName varchar(30),
+FirstName varchar(30));
+-- La columna "SID" no puede incluir valores duplicados
+-- Note que una columna que se escpecifica com clave primaria tambien puede ser unica. Al mismo tiempo,
+-- una columna que es unica puede o no ser clave primaria
+
+insert into Customer
+(SID, LastName, FirstName)
+values('0', 'Corina', null)
+
+select * from Customer
+
+/*CHECK
+La restriccion CHECK asegura que todos los valores en una columana cumplan ciertas condiciones*/
+
+drop table Customer
+
+create table Customer
+(SID integer check(SID > 0),
+LastName varchar(30),
+FirstName varchar(30));
+
+insert into Customer
+(SID, LastName, FirstName)
+values('0', 'Corina', null)
+
+-- Acontinuacion se presentan ejemplos para la especificacion de una clave primaria cuando se crea una tabla
+
+drop table Customer
+-- Segunda forma: Crear la tabla sin especificar llave primaria y luego se modificala tabla
+create table Customer
+(SID integer not null,
+LastName varchar(30),
+FirstName varchar(30));
+
+-- Modificar tabla
+alter table Customer add primary key(SID);
+
+-- Otra forma de modificar la tabla es editando el nombre del Key a PK_Customer
+alter table Customer add
+constraint PK_Customer primary key(SID);
+
+drop table Customer
+-- Primera forma: Especificar llaves primarias al crear la tabla
+create table Customer
+(SID integer primary key,
+LastName varchar(30),
+FirstName varchar(30));
+
+
+/* En el ejemplo el campo Customer_SID en la tabla es una clave externa (foreign)
+relacionada con la tabla Customer*/
+-- Primera forma: Al momento de crear la tabla
+create table Orders
+(IdOrder integer primary key,
+OrderDate datetime,
+SIDOrder integer foreign key references Customer(SID),
+Amount float);
+
+drop table Orders
+-- Segunda forma: Con restriccion CONSTRAINT
+create table Orders
+(IdOrder integer primary key,
+OrderDate datetime,
+SIDCustomer integer,
+constraint PK_Orders foreign key(SIDCustomer) references Customer(SID),
+Amount float);
+
+-- Tercera forma: Creando la tabla sin foreign key y luego alterando la tabla
+drop table Orders
+create table Orders
+(IdOrder integer primary key identity(0,1),
+OrderDate datetime,
+SIDCustomer integer,
+Amount float);
+
+alter table Orders
+add constraint PK_Orders foreign key (SIDCustomer) references Customer(SID);

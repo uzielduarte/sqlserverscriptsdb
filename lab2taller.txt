@@ -1,0 +1,210 @@
+Create database TallerLabTwo
+go
+
+use TallerLabTwo
+go
+
+-- Creacion de Catalogos/Entidades/Sujetos de la db
+Create table Cliente
+(IdCliente int primary key identity(0,1),
+PrimerNombre varchar(80),
+PrimerApellido varchar(80),
+Cedula varchar(80),
+Correo varchar(80))
+go
+
+Create table Mecanico
+(IdMecanico int primary key identity(0,1),
+PrimerNombre varchar(80),
+PrimerApellido varchar(80),
+Cedula varchar(80),
+Correo varchar(80))
+go
+
+Create table Servicio
+(IdServicio int primary key identity(0,1),
+Descripcion varchar(100),
+Precio money,
+TipoMantenimiento varchar(80))
+go
+
+Create table Vehiculo
+(IdVehiculo int primary key identity(0,1),
+IdCliente int,
+Marca varchar(50),
+Modelo varchar(50),
+Anio int)
+go
+
+Create table Repuesto
+(IdRepuesto int primary key identity(0,1),
+Titulo varchar(80),
+Descripcion varchar(80),
+Marca varchar(50),
+Modelo varchar(50),
+Precio money)
+go
+
+-- Creacion de tablas de Operaciones/Verbos de la db
+Create table Mantenimiento
+(IdMantenimiento int primary key identity(0,1),
+IdVehiculo int,
+FechaIngreso date,
+FechaSalida date)
+
+Create table ServicioMantenimiento
+(IdSM int primary key identity(0,1),
+IdMantenimiento int,
+IdServicio int,
+IdMecanico int,
+Costo money)
+go
+
+Create table ServicioRepuesto
+(IdSM int not null,
+IdRepuesto int not null,
+Costo money,
+Cantidad int)
+
+-- Creacion de Integridad Referencial/Relacional
+Alter table Vehiculo
+add foreign key (IdCliente)
+References Cliente(IdCliente)
+
+Alter table Mantenimiento
+add foreign key (IdVehiculo)
+References Vehiculo(IdVehiculo)
+
+Alter table ServicioMantenimiento
+add foreign key (IdMantenimiento)
+References Mantenimiento(IdMantenimiento)
+
+Alter table ServicioMantenimiento
+add foreign key (IdServicio)
+References Servicio(IdServicio)
+
+Alter table ServicioMantenimiento
+add foreign key (IdMecanico)
+References Mecanico(IdMecanico)
+
+Alter table ServicioRepuesto
+add foreign key (IdSM)
+References ServicioMantenimiento(IdSM)
+
+Alter table ServicioRepuesto
+add foreign key (IdRepuesto)
+References Repuesto(IdRepuesto)
+
+Alter table ServicioRepuesto
+add primary key(IdSM, IdRepuesto)
+
+use TallerLabTwo
+go
+-- 2.1 Insertar un registro en la tabla Cliente
+insert into Cliente(PrimerNombre, PrimerApellido, Cedula, Correo)
+Values('Pedro', 'Romero', '001-110294-0029N', 'pedro@gmail.com')
+insert into Cliente(PrimerNombre, PrimerApellido, Cedula, Correo)
+Values('Ana', 'Fuentes', '001-110294-0029N', 'ana78@gmail.com')
+
+-- 2.2 Visualizar los registros de todos los campos de la tabla Cliente
+Select * from Cliente
+
+-- 2.3 Actualizar registro de la tabla Cliente
+update Cliente set Correo = 'pedro@hotmail.com' where IdCliente = 0
+
+-- 2.4 Borrar un registro de la tabla Cliente
+Delete from Cliente where IdCliente = 1
+
+Select * from Cliente
+
+-- 2.5 Borrar todos los registros de la tabla Cliente
+Delete from Cliente
+
+Select * from Cliente
+
+-- 2.6 Crear un respaldo de la db
+Backup database TallerLabTwo to disk = 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\TallerLabTwo.bak'
+
+-- 2.7 Borrar una db
+use master
+Drop database TallerLabTwo
+
+-- 2.8 Visualiza los encabezados de las copias de seguridad de la db
+Restore headeronly from disk = 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\TallerLabTwo.bak'
+
+-- 2.9 Listar los archivos de la db y registro del conjunto de copia de seguridad
+Restore filelistonly from disk = 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\TallerLabTwo.bak'
+
+-- 2.10 Restaurar una db
+use master
+Restore database TallerLabTwo from disk = 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\TallerLabTwo.bak'
+with Replace
+
+-- Instanciar la db TallerLabTwo
+use TallerLabTwo
+
+-- Visualizar todos los registros de la tabla Cliente
+select * from Cliente
+
+-- Insertar registros en la tabla Cliente
+insert into Cliente(PrimerNombre, PrimerApellido, Cedula, Correo)
+values('Elio', 'Ramirez', '001-031967-0029M', 'elio@gmail.com')
+
+insert into Cliente(PrimerNombre, PrimerApellido, Cedula, Correo)
+values('Ramiro', 'Ortiz', '401-050894-020N', 'ramiro@outlook.com')
+
+insert into Cliente(PrimerNombre, PrimerApellido, Cedula, Correo)
+values('Elena', 'Colindres', '055-10052005-456J', 'colindres@hotmail.com')
+
+select * from Cliente
+
+-- Mostrar informacion basica del backup
+Restore headeronly from disk = 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\TallerLabTwo.bak'
+
+-- Respaldo diferencial (datos y transacciones) de la db TallerLabTwo
+Backup database TallerLabTwo
+to disk = 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\TallerLabTwo.bak'
+--opcional
+with name = 'RespaldoDiferencialDBTallerLabTwo',
+description = 'Respaldo Dif 23/08/2021',
+Differential
+
+-- Visualizar nuevamente la informacion basica del Backup (headonly)
+Restore headeronly from disk = 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\TallerLabTwo.bak'
+
+-- Respaldo del log de Transacciones de la db
+Backup log TallerLabTwo
+to disk = 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\TallerLabTwo.bak'
+
+-- Mostrar nuevamente la informacion basica de la db
+Restore headeronly from disk = 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\TallerLabTwo.bak'
+Restore filelistonly from disk = 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\TallerLabTwo.bak'
+
+use master
+Drop database TallerLabTwo
+
+-- Restaurar de db a partir de los archivos .mdf y .ldf
+Restore database TallerLabTwo
+from disk = 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\TallerLabTwo.bak'
+with
+move 'TallerLabTwo' to 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\TallerLabTwo.mdf',
+move 'TallerLabTwo_log' to 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\TallerLabTwo_log.ldf'
+
+-- Hacer cualquier movimiento en la db 
+use TallerLabTwo
+go
+
+Select * from Cliente
+Delete from Cliente where IdCliente = 2
+
+Select * from Vehiculo
+Delete from Vehiculo
+
+-- Separacion y Vinculacion de db en sql server
+-- Separacion de db (borrar todo el codigo que este arriba)
+sp_detach_db TallerLabTwo
+go
+-- Vinculacion
+sp_attach_db TallerLabTwo,
+'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\TallerLabTwo.mdf',
+'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\Backup\TallerLabTwo_log.ldf'

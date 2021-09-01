@@ -1,0 +1,11 @@
+Tara 2:
+1. Crear registro de Clientes
+2. Visualizar registros
+3. Actualizar registros en un campo determinado
+4. Borror un registro de una tabla
+5. Borrar todos los registros de una tabla
+6. Respaldo de una db
+7. Borrar una db
+8. Visualizar el encabezado de una copia de seguridad
+9. Listar los archivos de la db y registro del conjunto de copia de seguridad
+10. Restaurar una db

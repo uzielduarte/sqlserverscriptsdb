@@ -1,0 +1,57 @@
+Create database Empresa
+go
+
+use Empresa
+go
+
+--Creacion de tablas
+Create table Cliente
+(IdCliente int primary key,
+nombre varchar(80),
+estado varchar(80))
+go
+
+Create table Producto
+(IdProducto int primary key,
+nombre_producto varchar(80),
+precio money)
+go
+
+Create table Orden
+(IdOrden int primary key,
+IdCliente int,
+fecha date)
+go
+
+Create table Detalle_Orden
+(IdOrden int,
+IdProducto int,
+Cantidad int,
+Precio_venta money)
+go
+
+-- Agregando las llaves foraneas y relaciones
+-- Relacion Cliente-Orden
+Alter table Orden
+add foreign key (IdCliente)
+References Cliente(IdCliente)
+
+-- Relacion Producto-Detalle_Orden
+Alter table Detalle_Orden
+add foreign key (IdProducto)
+References Producto(IdProducto)
+
+-- Relacion Orden-Detalle_Orden
+Alter table Detalle_Orden
+add foreign key (IdOrden)
+References Orden(IdOrden)
+
+-- Se establece que los atributos de llaves foraneas no pueden ser nulos
+alter table Detalle_Orden
+alter column IdOrden int not null
+alter table Detalle_Orden
+alter column IdProducto int not null
+
+-- Creacion de clave compuesta
+Alter table Detalle_Orden
+add primary key(IdOrden, IdProducto)

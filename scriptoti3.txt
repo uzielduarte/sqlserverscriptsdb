@@ -1,0 +1,125 @@
+Create database TallerReparacion
+go
+
+use TallerReparacion
+go
+
+-- Creacion de tablas
+Create table Marca
+(IdMarca int primary key,
+Nombre varchar(50))
+go
+
+Create table Modelo
+(IdModelo int primary key,
+Nombre varchar(50))
+go
+
+Create table Seccion
+(IdSeccion int primary key,
+IdMarca int,
+CapacidadTotal int,
+CapacidadUso int)
+go
+
+Create table Mecanico
+(IdMecanico int primary key,
+Nombre varchar(80),
+IdMarca int,
+Estado varchar(15),
+Precio float)
+go
+
+Create table Propietario
+(IdPropietario int primary key,
+Nombre varchar(80),
+Celular varchar(20),
+Direccion varchar(150))
+go
+
+Create table Vehiculo
+(IdVehiculo int primary key,
+IdMarca int,
+IdModelo int,
+IdPropietario int)
+go
+
+Create table IngresoVehicular
+(IdIngVeh int primary key,
+Fecha date,
+IdVehiculo int,
+Estado varchar(15),
+DescripcionInc varchar(250),
+DescripcionFin varchar(250))
+go
+
+Create table DetalleIngresoVehicular
+(IdDIV int primary key,
+IdIngVeh int,
+IdMecanico int)
+go
+
+Create table Repuesto
+(RepuestoCodigo varchar(10) primary key,
+Nombre varchar(80),
+Precio float)
+go
+
+Create table RepuestoCambiado
+(IdRC int primary key,
+IdDIV int,
+RepuestoCodigo varchar(10))
+go
+
+Create table GalponDeposito
+(IdGD int primary key,
+IdVehiculo int,
+Fecha date)
+go
+-- Termino de crear las tablas
+
+-- Agregando las llaves foraneas y relaciones
+-- Relacion Marca-Seccion
+Alter table Seccion
+add foreign key(IdMarca)
+References Marca(IdMarca)
+
+Alter table Vehiculo
+add foreign key(IdMarca)
+References Marca(IdMarca)
+
+Alter table Vehiculo
+add foreign key(IdModelo)
+References Modelo(IdModelo)
+
+Alter table Vehiculo
+add foreign key(IdPropietario)
+References Propietario(IdPropietario)
+
+Alter table IngresoVehicular
+add foreign key(IdVehiculo)
+References Vehiculo(IdVehiculo)
+
+Alter table DetalleIngresoVehicular
+add foreign key(IdIngVeh)
+References IngresoVehicular(IdIngVeh)
+
+Alter table DetalleIngresoVehicular
+add foreign key(IdMecanico)
+References Mecanico(IdMecanico)
+
+Alter table Mecanico
+add foreign key(IdMarca)
+References Marca(IdMarca)
+
+Alter table RepuestoCambiado
+add foreign key(IdDIV)
+References DetalleIngresoVehicular(IdDIV)
+
+Alter table RepuestoCambiado
+add foreign key(RepuestoCodigo)
+References Repuesto(RepuestoCodigo)
+
+Alter table GalponDeposito
+add foreign key(IdVehiculo)
+References Vehiculo(IdVehiculo)
